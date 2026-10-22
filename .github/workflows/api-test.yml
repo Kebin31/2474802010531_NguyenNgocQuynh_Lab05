@@ -1,0 +1,55 @@
+name: ReqRes API Tests
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  api-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install Newman and HTML reporter
+        run: npm install --global newman newman-reporter-htmlextra
+
+      - name: Check API key
+        env:
+          REQRES_API_KEY: ${{ secrets.REQRES_API_KEY }}
+        run: |
+          if [ -z "$REQRES_API_KEY" ]; then
+            echo "Missing repository secret REQRES_API_KEY"
+            exit 1
+          fi
+
+      - name: Run API tests with CSV
+        env:
+          REQRES_API_KEY: ${{ secrets.REQRES_API_KEY }}
+        run: |
+          newman run ReqRes_Collection.json \
+            -e ReqRes_Environment.json \
+            -d users.csv \
+            --env-var "reqresApiKey=$REQRES_API_KEY" \
+            --reporters cli,htmlextra \
+            --reporter-htmlextra-export report.html \
+            --reporter-htmlextra-skipSensitiveData
+
+      - name: Upload HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reqres-api-report
+          path: report.html
+          if-no-files-found: warn
