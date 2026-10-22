@@ -16,24 +16,10 @@
             {
               "listen": "test",
               "script": {
-                "exec": [
-                  "pm.test(\"Register trả về Status 200\", function () {\r",
-                  "    pm.response.to.have.status(200);\r",
-                  "});\r",
-                  "\r",
-                  "const data = pm.response.json();\r",
-                  "\r",
-                  "pm.test(\"Phản hồi có token\", function () {\r",
-                  "    pm.expect(data.token).to.be.a(\"string\").and.not.empty;\r",
-                  "});\r",
-                  "\r",
-                  "if (data.token) {\r",
-                  "    pm.environment.set(\"userToken\", data.token);\r",
-                  "}"
-                ],
                 "type": "text/javascript",
-                "packages": {},
-                "requests": {}
+                "exec": [
+                  "(() => {\r\n  pm.test(\"Register status 200\", () => {\r\n    pm.response.to.have.status(200);\r\n  });\r\n\r\n  const registerResponse = pm.response.json();\r\n\r\n  pm.test(\"Response contains token\", () => {\r\n    pm.expect(registerResponse.token).to.be.a(\"string\").and.not.empty;\r\n  });\r\n\r\n  pm.environment.set(\"userToken\", registerResponse.token);\r\n})();"
+                ]
               }
             }
           ],
@@ -42,8 +28,7 @@
             "header": [
               {
                 "key": "x-api-key",
-                "value": "{{reqresApiKey}}",
-                "type": "text"
+                "value": "{{reqresApiKey}}"
               }
             ],
             "body": {
@@ -76,7 +61,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"Status is 201\", () => {\r\n  pm.response.to.have.status(201);\r\n});\r\n\r\nconst data = pm.response.json();\r\n\r\npm.test(\"Name matches CSV\", () => {\r\n  pm.expect(data.name).to.eql(pm.iterationData.get(\"name\"));\r\n});\r\n\r\npm.test(\"Job matches CSV\", () => {\r\n  pm.expect(data.job).to.eql(pm.iterationData.get(\"job\"));\r\n});\r\n\r\npm.environment.set(\"userId\", data.id);"
+                  "(() => {\r\n  pm.test(\"Create status 201\", () => {\r\n    pm.response.to.have.status(201);\r\n  });\r\n\r\n  const createResponse = pm.response.json();\r\n\r\n  pm.test(\"Name matches CSV\", () => {\r\n    pm.expect(createResponse.name).to.eql(pm.iterationData.get(\"name\"));\r\n  });\r\n\r\n  pm.test(\"Job matches CSV\", () => {\r\n    pm.expect(createResponse.job).to.eql(pm.iterationData.get(\"job\"));\r\n  });\r\n\r\n  pm.environment.set(\"userId\", createResponse.id);\r\n})();"
                 ]
               }
             }
@@ -121,24 +106,10 @@
             {
               "listen": "test",
               "script": {
-                "exec": [
-                  "pm.test(\"Lấy user trả về Status 200\", function () {\r",
-                  "    pm.response.to.have.status(200);\r",
-                  "});\r",
-                  "\r",
-                  "const data = pm.response.json();\r",
-                  "\r",
-                  "pm.test(\"User ID bằng 2\", function () {\r",
-                  "    pm.expect(data.data.id).to.eql(2);\r",
-                  "});\r",
-                  "\r",
-                  "pm.test(\"Email thuộc miền reqres.in\", function () {\r",
-                  "    pm.expect(data.data.email).to.include(\"@reqres.in\");\r",
-                  "});"
-                ],
                 "type": "text/javascript",
-                "packages": {},
-                "requests": {}
+                "exec": [
+                  "(() => {\r\n  pm.test(\"Single user status 200\", () => {\r\n    pm.response.to.have.status(200);\r\n  });\r\n\r\n  const singleResponse = pm.response.json();\r\n\r\n  pm.test(\"User ID is 2\", () => {\r\n    pm.expect(singleResponse.data.id).to.eql(2);\r\n  });\r\n\r\n  pm.test(\"Email contains @reqres.in\", () => {\r\n    pm.expect(singleResponse.data.email).to.include(\"@reqres.in\");\r\n  });\r\n})();"
+                ]
               }
             }
           ],
@@ -147,8 +118,7 @@
             "header": [
               {
                 "key": "x-api-key",
-                "value": "{{reqresApiKey}}",
-                "type": "text"
+                "value": "{{reqresApiKey}}"
               }
             ],
             "url": {
@@ -171,20 +141,10 @@
             {
               "listen": "test",
               "script": {
-                "exec": [
-                  "pm.test(\"Cập nhật user trả về Status 200\", function () {\r",
-                  "    pm.response.to.have.status(200);\r",
-                  "});\r",
-                  "\r",
-                  "const data = pm.response.json();\r",
-                  "\r",
-                  "pm.test(\"Response có updatedAt\", function () {\r",
-                  "    pm.expect(data.updatedAt).to.exist;\r",
-                  "});"
-                ],
                 "type": "text/javascript",
-                "packages": {},
-                "requests": {}
+                "exec": [
+                  "(() => {\r\n  pm.test(\"Update status 200\", () => {\r\n    pm.response.to.have.status(200);\r\n  });\r\n\r\n  const updateResponse = pm.response.json();\r\n\r\n  pm.test(\"Response contains updatedAt\", () => {\r\n    pm.expect(updateResponse.updatedAt).to.be.a(\"string\").and.not.empty;\r\n  });\r\n})();"
+                ]
               }
             }
           ],
@@ -193,8 +153,7 @@
             "header": [
               {
                 "key": "x-api-key",
-                "value": "{{reqresApiKey}}",
-                "type": "text"
+                "value": "{{reqresApiKey}}"
               }
             ],
             "body": {
